@@ -358,6 +358,17 @@ class MkdocsWithConfluence(BasePlugin):
                 if self.config["debug"]:
                     print("ERR!")
 
+    def read_page(self, page_name, parent_page_id, confluence_body):
+        if self.config["debug"]:
+            print(f" * Mkdocs With Confluence: Reading Page Content: PAGE NAME: {page_name}, parent ID: {parent_page_id}")
+        url = self.config["host_url"] + "/"
+        read_var = requests.get(url)
+        if read_var != confluence_body:
+            update_page(page_name, read_var)
+            print("The page content has been updated")
+        else:
+            print("Nothing has changed")
+
     def update_page(self, page_name, page_content_in_storage_format):
         page_id = self.find_page_id(page_name)
         if self.config["verbose"]:
