@@ -360,7 +360,7 @@ class MkdocsWithConfluence(BasePlugin):
 
     def read_page(self, page_name, parent_page_id, confluence_body):
         if self.config["debug"]:
-            print(f" * Mkdocs With Confluence: Reading Page Content: PAGE NAME: {page_name}, parent ID: {parent_page_id}")
+            print(f" * Mkdocs  With Confluence: Reading Page Content: PAGE NAME: {page_name}, parent ID: {parent_page_id}")
         url = self.config["host_url"] + "/"
         read_var = requests.get(url)
         if read_var != confluence_body:
