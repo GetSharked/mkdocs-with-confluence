@@ -10,6 +10,8 @@ from mkdocs.config import config_options
 from mkdocs.plugins import BasePlugin
 from md2cf.confluence_renderer import ConfluenceRenderer
 
+from tests.test import update_page
+
 TEMPLATE_BODY = "<p> TEMPLATE </p>"
 
 
@@ -358,11 +360,21 @@ class MkdocsWithConfluence(BasePlugin):
                 if self.config["debug"]:
                     print("ERR!")
 
-    def read_page(self, page_name, parent_page_id, confluence_body):
+    def get_page_content(self, page_name, parent_page_id, confluence_body, page_content_in_storage_format):
         if self.config["debug"]:
             print(f" * Mkdocs  With Confluence: Reading Page Content: PAGE NAME: {page_name}, parent ID: {parent_page_id}")
         url = self.config["host_url"] + "/"
-        read_var = requests.get(url)
+        headers = {"Content-Type": "application/json"}
+        auth = (self.user, self.pw)
+        space = self.config["space"]
+        data = {
+            "type": "page",
+            "title": page_name,
+            "space": {"key": space},
+            "ancestors": [{"id": parent_page_id}],
+            "body": {"storage": {"value": page_content_in_storage_format, "representation": "storage"}},
+        }
+        read_var = requests.get(url, json=data, headers=headers, auth=auth)
         if read_var != confluence_body:
             update_page(page_name, read_var)
             print("The page content has been updated")
